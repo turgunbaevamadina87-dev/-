@@ -17,11 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+"""
+URL configuration for edu_center project.
+"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from django.shortcuts import render
+
+
+def index(request):
+    return render(request, 'index.html')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,8 +39,7 @@ urlpatterns = [
     path('api/', include('assignments.urls')),
     path('api/', include('attendance.urls')),
     path('api/', include('progress.urls')),
-
-
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('', index, name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

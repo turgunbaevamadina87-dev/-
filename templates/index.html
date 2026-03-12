@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduCenter v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e1017;--surface:#1a1d28;--card:#22263a;--card2:#2a2f45;
+  --border:rgba(255,255,255,0.07);--yellow:#f5c800;--yellow2:#ffd700;
+  --text:#fff;--muted:#7a8099;--student:#4db8ff;--teacher:#f5c800;
+  --danger:#ff5c5c;--success:#3ecf8e;--r:14px;
+}
+body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.page{display:none;min-height:100vh}
+.page.active{display:flex}
+.auth-bg{position:relative;flex:1;overflow:hidden;display:flex;align-items:center;padding:60px 80px}
+.auth-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(245,200,0,0.07),transparent 60%)}
+.gbg{position:absolute;inset:0;opacity:.035;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);font-family:Montserrat,sans-serif;font-weight:900;font-size:110px;color:#fff;overflow:hidden;transform:rotate(-8deg) scale(1.3);pointer-events:none}
+.gbg span{display:flex;align-items:center;justify-content:center}
+.auth-hero{position:relative;z-index:1}
+.alogo{display:flex;align-items:center;gap:12px;margin-bottom:56px}
+.lbox{width:46px;height:46px;background:var(--yellow);border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;color:#000;box-shadow:0 8px 24px rgba(245,200,0,0.35)}
+.lname{font-family:Montserrat,sans-serif;font-weight:800;font-size:24px}
+.lname span{color:var(--yellow)}
+.htitle{font-family:Montserrat,sans-serif;font-weight:900;font-size:64px;line-height:1.02;letter-spacing:-2.5px;color:var(--yellow);margin-bottom:14px}
+.hsub{font-size:17px;color:rgba(255,255,255,.5);font-weight:300}
+.acard{width:460px;min-height:100vh;background:var(--card);display:flex;align-items:center;justify-content:center;padding:40px;box-shadow:-24px 0 60px rgba(0,0,0,.45)}
+.aform{width:100%;max-width:360px}
+.ftitle{font-family:Montserrat,sans-serif;font-weight:700;font-size:24px;text-align:center;margin-bottom:6px}
+.fdesc{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px;line-height:1.6}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.rc{padding:14px 10px;border-radius:12px;border:2px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:all .22s}
+.rc:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px)}
+.rc.at{border-color:var(--teacher);background:rgba(245,200,0,.09)}
+.rc.as{border-color:var(--student);background:rgba(77,184,255,.09)}
+.rc .ri{font-size:26px;margin-bottom:5px}
+.rc .rl{font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:.6px;color:var(--muted)}
+.rc.at .rl{color:var(--teacher)}.rc.as .rl{color:var(--student)}
+.ig{margin-bottom:14px}
+.il{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}
+.iw{position:relative}
+.iw input,.iw select,.iw textarea{width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;color:#fff;font-size:14px;font-family:'Open Sans',sans-serif;outline:none;transition:all .2s}
+.iw input::placeholder,.iw textarea::placeholder{color:rgba(255,255,255,.18)}
+.iw input:focus,.iw select:focus,.iw textarea:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,200,0,.1)}
+.iw select option{background:var(--card)}
+.iw textarea{resize:vertical;min-height:80px}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px}
+.btn{width:100%;padding:15px;background:var(--yellow);border:none;border-radius:11px;font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;letter-spacing:.5px;color:#000;cursor:pointer;margin-top:6px;transition:all .2s}
+.btn:hover{background:var(--yellow2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,200,0,.28)}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.slink{text-align:center;font-size:13px;color:var(--muted)}
+.slink a{color:var(--yellow);text-decoration:none;font-weight:600;cursor:pointer}
+.err{background:rgba(255,92,92,.09);border:1px solid rgba(255,92,92,.3);border-radius:9px;padding:9px 13px;font-size:12px;color:#ff8a8a;margin-bottom:12px;display:none}
+.err.show{display:block}
+.navbar{background:var(--card);border-bottom:1px solid var(--border);height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nlogo{display:flex;align-items:center;gap:10px;font-family:Montserrat,sans-serif;font-weight:800;font-size:19px}
+.nlogo .dot{color:var(--yellow)}
+.nright{display:flex;align-items:center;gap:14px}
+.nbadge{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:5px 14px 5px 6px;cursor:pointer;transition:border-color .2s}
+.nbadge:hover{border-color:rgba(255,255,255,.2)}
+.nav-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
+.nav-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avt{background:rgba(245,200,0,.2);color:var(--yellow)}
+.avs{background:rgba(77,184,255,.2);color:var(--student)}
+.ninfo .nn{font-size:13px;font-weight:600}
+.ninfo .nr{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.rlt{color:var(--teacher)}.rls{color:var(--student)}
+.bout{padding:7px 16px;background:transparent;border:1.5px solid rgba(255,92,92,.35);border-radius:8px;color:#ff8080;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:5px}
+.bout:hover{background:rgba(255,92,92,.1);color:#fff}
+#page-teacher,#page-student{flex-direction:column}
+.dlayout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:230px;background:var(--card);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;min-height:calc(100vh - 62px);overflow-y:auto}
+.sgrp{padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:8px}
+.si{display:flex;align-items:center;gap:11px;padding:10px 20px;cursor:pointer;transition:all .2s;font-size:13.5px;color:var(--muted);font-weight:500;border-left:3px solid transparent}
+.si:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.si.active{background:rgba(245,200,0,.07);color:var(--yellow);border-left-color:var(--yellow)}
+.si .ico{font-size:17px;width:20px;text-align:center}
+.dmain{flex:1;overflow-y:auto;padding:28px 32px;background:var(--bg)}
+.section{display:none}.section.active{display:block}
+.stitle{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:transform .2s,border-color .2s}
+.sc:hover{transform:translateY(-3px);border-color:rgba(245,200,0,.25)}
+.sc .si2{font-size:26px;margin-bottom:10px}
+.sc .sn{font-family:Montserrat,sans-serif;font-weight:800;font-size:28px;color:var(--yellow)}
+.sc .sl{font-size:12px;color:var(--muted);margin-top:2px}
+.fbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.fbar input,.fbar select{padding:9px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;color:#fff;font-size:13px;font-family:'Open Sans',sans-serif;outline:none;transition:border-color .2s}
+.fbar input{flex:1;min-width:160px}
+.fbar input:focus,.fbar select:focus{border-color:var(--yellow)}
+.fbar select option{background:var(--card)}
+.fbtn{padding:9px 16px;background:var(--yellow);border:none;border-radius:9px;font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#000;cursor:pointer;transition:all .2s;white-space:nowrap}
+.fbtn:hover{background:var(--yellow2);transform:translateY(-1px)}
+.tw{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.tht{font-family:Montserrat,sans-serif;font-weight:700;font-size:14px}
+.tcnt{font-size:12px;color:var(--muted);background:var(--surface);padding:3px 10px;border-radius:20px}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border);background:rgba(0,0,0,.15)}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px}
+.bd{background:rgba(62,207,142,.15);color:var(--success)}
+.bw{background:rgba(245,200,0,.15);color:var(--yellow)}
+.br{background:rgba(255,92,92,.15);color:var(--danger)}
+.bp{background:rgba(62,207,142,.15);color:var(--success)}
+.ba{background:rgba(255,92,92,.15);color:var(--danger)}
+.bl{background:rgba(245,200,0,.15);color:var(--yellow)}
+.bb{background:rgba(77,184,255,.15);color:var(--student)}
+.bi{background:rgba(245,200,0,.15);color:var(--yellow)}
+.bv{background:rgba(62,207,142,.15);color:var(--success)}
+.ab{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Open Sans',sans-serif;transition:all .2s}
+.aby{background:rgba(245,200,0,.15);color:var(--yellow)}.aby:hover{background:var(--yellow);color:#000}
+.abg{background:rgba(62,207,142,.15);color:var(--success)}.abg:hover{background:var(--success);color:#000}
+.abr{background:rgba(255,92,92,.15);color:var(--danger)}.abr:hover{background:var(--danger);color:#fff}
+.abb{background:rgba(77,184,255,.15);color:var(--student)}.abb:hover{background:var(--student);color:#000}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.mo.open{display:flex}
+.md{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:500px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:fu .3s ease;max-height:90vh;overflow-y:auto}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.mdt{font-family:Montserrat,sans-serif;font-weight:800;font-size:20px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between}
+.mcl{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.mcl:hover{color:#fff}
+.mfoot{display:flex;gap:10px;margin-top:20px}
+.mfoot .btn{margin:0}
+.bcl{width:100%;padding:14px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s}
+.bcl:hover{border-color:rgba(255,255,255,.2);color:#fff}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;display:flex;gap:28px;align-items:flex-start;margin-bottom:22px}
+.ppwrap{position:relative;flex-shrink:0}
+.pp{width:100px;height:100px;border-radius:50%;border:3px solid var(--yellow);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;background:var(--surface)}
+.pp img{width:100%;height:100%;object-fit:cover}
+.ped{position:absolute;bottom:2px;right:2px;width:28px;height:28px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;border:2px solid var(--bg);transition:transform .2s}
+.ped:hover{transform:scale(1.15)}
+.pfi{display:none}
+.pinfo{flex:1}
+.pname{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px;margin-bottom:4px}
+.prb{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.6px;margin-bottom:14px}
+.prbt{background:rgba(245,200,0,.15);color:var(--teacher)}
+.prbs{background:rgba(77,184,255,.15);color:var(--student)}
+.pdets{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pdet{background:var(--surface);border-radius:10px;padding:12px 14px}
+.pdl{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+.pdv{font-size:14px;font-weight:600}
+.pgbar{margin-top:14px}
+.pglb{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.pglb span:first-child{color:var(--muted)}
+.pglb span:last-child{font-weight:700}
+.pgtrack{height:6px;background:var(--surface);border-radius:3px;overflow:hidden}
+.pgfill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.wbanner{background:linear-gradient(135deg,var(--card),rgba(245,200,0,.07));border:1px solid rgba(245,200,0,.18);border-radius:18px;padding:26px 30px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;position:relative;overflow:hidden}
+.wbanner::after{content:'';position:absolute;right:0;inset-block:0;width:150px;background:radial-gradient(ellipse at right,rgba(245,200,0,.1),transparent)}
+.wbt h2{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px;margin-bottom:4px}
+.wbt h2 span{color:var(--yellow)}
+.wbt p{font-size:13px;color:var(--muted)}
+.wbe{font-size:48px}
+.scard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stucard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.stucard:hover{transform:translateY(-4px);border-color:rgba(245,200,0,.3);box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.stucard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--yellow),var(--yellow2))}
+.stav{width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;overflow:hidden}
+.stav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.stname{font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;margin-bottom:4px}
+.stmeta{font-size:12px;color:var(--muted);margin-bottom:8px}
+.stprog{height:4px;background:var(--surface);border-radius:2px;overflow:hidden}
+.stpf{height:100%;background:var(--yellow);border-radius:2px}
+.news-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.ncard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s}
+.ncard:hover{transform:translateY(-3px);border-color:rgba(245,200,0,.25)}
+.nthumb{height:120px;display:flex;align-items:center;justify-content:center;font-size:42px}
+.nt1{background:linear-gradient(135deg,#1a2a4a,#0d1a30)}
+.nt2{background:linear-gradient(135deg,#2a1a4a,#1a0d30)}
+.nt3{background:linear-gradient(135deg,#1a4a2a,#0d3018)}
+.nt4{background:linear-gradient(135deg,#4a3a1a,#302610)}
+.nbody{padding:16px}
+.ntag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--yellow);margin-bottom:6px}
+.nnm{font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;margin-bottom:6px;line-height:1.4}
+.ndt{font-size:12px;color:var(--muted)}
+.sup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:22px}
+.supcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;text-align:center}
+.supcard:hover{border-color:rgba(245,200,0,.3);transform:translateY(-2px)}
+.supcard .sci{font-size:32px;margin-bottom:10px}
+.supcard .sct{font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;margin-bottom:4px}
+.supcard .scd{font-size:12px;color:var(--muted)}
+.pay-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.pay-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.pay-title{font-family:Montserrat,sans-serif;font-weight:700;font-size:15px}
+.pay-amount{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px;color:var(--yellow)}
+.pay-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pay-row:last-child{border-bottom:none}
+.pay-row span:last-child{font-weight:600}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--yellow);border-radius:12px;padding:13px 18px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.4);z-index:9999;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:9px}
+.toast.show{transform:translateY(0);opacity:1}
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;margin-bottom:20px;transition:color .2s}
+.back-btn:hover{color:var(--yellow)}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .4s ease forwards}
+.fi1{animation:fi .4s ease .1s forwards;opacity:0}
+.fi2{animation:fi .4s ease .2s forwards;opacity:0}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+/* Пагинация */
+.pagination{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;flex-wrap:wrap}
+.ppage{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);transition:all .2s}
+.ppage:hover{border-color:var(--yellow);color:var(--yellow)}
+.ppage.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+.ppage.prev,.ppage.next{width:auto;padding:0 14px;font-size:12px}
+/* Карточка добавления новости */
+.nadd-card{background:var(--card);border:2px dashed rgba(245,200,0,.3);border-radius:var(--r);padding:32px;text-align:center;cursor:pointer;transition:all .2s}
+.nadd-card:hover{border-color:var(--yellow);background:rgba(245,200,0,.04)}
+.nadd-icon{font-size:32px;margin-bottom:10px}
+.nadd-text{font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:var(--yellow)}
+.nadd-sub{font-size:12px;color:var(--muted);margin-top:4px}
+/* GROUP ROW — скрыт по умолчанию, виден только для студента */
+#rg-group-row{display:none}
+@media(max-width:900px){
+  .auth-bg{display:none}.acard{width:100%;min-height:100vh}
+  .sgrid{grid-template-columns:1fr 1fr}.scard-grid{grid-template-columns:1fr 1fr}
+  .news-grid,.sup-grid{grid-template-columns:1fr}
+  .sidebar{width:54px;padding:14px 0}.si span:last-child{display:none}.si{padding:11px;justify-content:center}
+  .dmain{padding:18px 14px}
+  .pcard{flex-direction:column;align-items:center;text-align:center}.pdets{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"><span id="ti">✅</span><span id="tm"></span></div>
+
+<!-- ══ REGISTER ══ -->
+<div class="page active" id="page-register">
+  <div class="auth-bg">
+    <div class="gbg"><span>E</span><span>D</span><span>U</span><span>C</span><span>E</span><span>N</span><span>T</span><span>E</span><span>R</span><span>E</span><span>D</span><span>U</span><span>C</span><span>E</span><span>N</span><span>T</span><span>E</span><span>R</span><span>E</span><span>D</span></div>
+    <div class="auth-hero">
+      <div class="alogo"><div class="lbox">E</div><div class="lname">Edu<span>Center</span></div></div>
+      <div class="htitle">Edu<br>Center</div><div class="hsub">Образовательная платформа</div>
+    </div>
+  </div>
+  <div class="acard"><div class="aform">
+    <div class="ftitle">Регистрация</div>
+    <div class="fdesc">Выберите роль и создайте аккаунт</div>
+    <div class="roles">
+      <div class="rc at" id="rr-t" onclick="setRole('reg','teacher')"><div class="ri">👨‍🏫</div><div class="rl">УЧИТЕЛЬ</div></div>
+      <div class="rc" id="rr-s" onclick="setRole('reg','student')"><div class="ri">👨‍🎓</div><div class="rl">СТУДЕНТ</div></div>
+    </div>
+    <div class="err" id="reg-err"></div>
+    <div class="ig"><label class="il">Полное имя</label><div class="iw"><input type="text" id="rg-name" placeholder="Имя и фамилия"></div></div>
+    <div class="ig"><label class="il">Логин</label><div class="iw"><input type="text" id="rg-login" placeholder="Придумайте логин"></div></div>
+    <div class="ig"><label class="il">Телефон</label><div class="iw"><input type="text" id="rg-phone" placeholder="+996 700 000 000"></div></div>
+    <!-- ГРУППА — только для студента -->
+    <div class="ig" id="rg-group-row">
+      <label class="il">Группа</label>
+      <div class="iw"><input type="text" id="rg-group" placeholder="Напишите название своей группы"></div>
+    </div>
+    <div class="ig"><label class="il">Пароль</label><div class="iw"><input type="password" id="rg-pass" placeholder="Мин. 6 символов"><button type="button" class="eye" onclick="teye('rg-pass',this)">👁</button></div></div>
+    <button type="button" class="btn" onclick="doReg()">СОЗДАТЬ АККАУНТ</button>
+    <div class="divider">или</div>
+    <div class="slink">Есть аккаунт? <a onclick="go('login')">Войти</a></div>
+  </div></div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div class="page" id="page-login">
+  <div class="auth-bg">
+    <div class="gbg"><span>E</span><span>D</span><span>U</span><span>C</span><span>E</span><span>N</span><span>T</span><span>E</span><span>R</span><span>E</span><span>D</span><span>U</span><span>C</span><span>E</span><span>N</span><span>T</span><span>E</span><span>R</span><span>E</span><span>D</span></div>
+    <div class="auth-hero">
+      <div class="alogo"><div class="lbox">E</div><div class="lname">Edu<span>Center</span></div></div>
+      <div class="htitle">Edu<br>Center</div><div class="hsub">Образовательная платформа</div>
+    </div>
+  </div>
+  <div class="acard"><div class="aform">
+    <div class="ftitle">Войти в систему</div>
+    <div class="fdesc">Введите логин и пароль</div>
+    <div class="roles">
+      <div class="rc at" id="lr-t" onclick="setRole('login','teacher')"><div class="ri">👨‍🏫</div><div class="rl">УЧИТЕЛЬ</div></div>
+      <div class="rc" id="lr-s" onclick="setRole('login','student')"><div class="ri">👨‍🎓</div><div class="rl">СТУДЕНТ</div></div>
+    </div>
+    <div class="err" id="login-err"></div>
+    <div class="ig"><label class="il">Логин</label><div class="iw"><input type="text" id="ll" placeholder="Логин"></div></div>
+    <div class="ig"><label class="il">Пароль</label><div class="iw"><input type="password" id="lp" placeholder="Пароль"><button type="button" class="eye" onclick="teye('lp',this)">👁</button></div></div>
+    <button type="button" class="btn" onclick="doLogin()">ВОЙТИ</button>
+    <div class="divider">или</div>
+    <div class="slink">Нет аккаунта? <a onclick="go('register')">Зарегистрироваться</a></div>
+  </div></div>
+</div>
+
+<!-- ══ TEACHER ══ -->
+<div class="page" id="page-teacher" style="flex-direction:column">
+  <nav class="navbar">
+    <div class="nlogo"><div class="lbox" style="width:34px;height:34px;font-size:16px;border-radius:8px">E</div>&nbsp;Edu<span class="dot">Center</span></div>
+    <div class="nright">
+      <div class="nbadge" onclick="tSec('t-profile')">
+        <div class="nav-av avt" id="t-nav">👨‍🏫</div>
+        <div class="ninfo"><div class="nn" id="t-nname">—</div><div class="nr rlt">УЧИТЕЛЬ</div></div>
+      </div>
+      <button type="button" class="bout" onclick="doLogout()">⬅ Выйти</button>
+    </div>
+  </nav>
+  <div class="dlayout">
+    <aside class="sidebar">
+      <div class="sgrp">Основное</div>
+      <div class="si active" id="si-t-home" onclick="tSec('t-home')"><span class="ico">🏠</span><span>Главная</span></div>
+      <div class="si" id="si-t-assignments" onclick="tSec('t-assignments')"><span class="ico">📚</span><span>Задания</span></div>
+      <div class="si" id="si-t-students" onclick="tSec('t-students')"><span class="ico">👥</span><span>Студенты</span></div>
+      <div class="si" id="si-t-attendance" onclick="tSec('t-attendance')"><span class="ico">📅</span><span>Посещаемость</span></div>
+      <div class="sgrp">Личное</div>
+      <div class="si" id="si-t-news" onclick="tSec('t-news')"><span class="ico">📰</span><span>Новости</span></div>
+      <div class="si" id="si-t-profile" onclick="tSec('t-profile')"><span class="ico">👤</span><span>Профиль</span></div>
+      <div class="si" id="si-t-password" onclick="tSec('t-password')"><span class="ico">🔑</span><span>Сменить пароль</span></div>
+      <div class="si" id="si-t-support" onclick="tSec('t-support')"><span class="ico">💬</span><span>Поддержка</span></div>
+    </aside>
+    <main class="dmain">
+      <div class="section active" id="t-home">
+        <div class="wbanner fi"><div class="wbt"><h2>Привет, <span id="t-wn">—</span>! 👋</h2><p>Управляйте группами, заданиями и студентами</p></div><div class="wbe">🏫</div></div>
+        <div class="sgrid fi1">
+          <div class="sc"><div class="si2">👥</div><div class="sn" id="ts-s">0</div><div class="sl">Студентов</div></div>
+          <div class="sc"><div class="si2">📚</div><div class="sn" id="ts-a">0</div><div class="sl">Заданий</div></div>
+          <div class="sc"><div class="si2">✅</div><div class="sn" id="ts-d">0</div><div class="sl">Выполнено</div></div>
+          <div class="sc"><div class="si2">⏳</div><div class="sn" id="ts-p">0</div><div class="sl">На проверке</div></div>
+        </div>
+        <div class="fi2">
+          <div class="stitle" style="font-size:16px">📋 Последние задания</div>
+          <div class="tw"><table><thead><tr><th>Задание</th><th>Группа</th><th>Дедлайн</th><th>Сдано</th></tr></thead><tbody id="t-htb"></tbody></table></div>
+        </div>
+      </div>
+      <div class="section" id="t-assignments">
+        <div class="stitle">📚 Задания <button type="button" class="btn" style="width:auto;padding:8px 18px;margin:0;font-size:12px" onclick="om('add-asgn')">+ Добавить</button></div>
+        <div class="fbar">
+          <input type="text" id="fa-s" placeholder="🔍 Поиск..." oninput="fAsgn()">
+          <select id="fa-g" onchange="fAsgn()"><option value="">Все группы</option></select>
+          <select id="fa-st" onchange="fAsgn()"><option value="">Все</option><option value="active">Активные</option><option value="expired">Истёкшие</option></select>
+          <button type="button" class="fbtn" onclick="rf('asgn')">↺ Сброс</button>
+        </div>
+        <div class="tw"><div class="th2"><span class="tht">Список заданий</span><span class="tcnt" id="ac">—</span></div>
+        <table><thead><tr><th>Название</th><th>Группа</th><th>Дедлайн</th><th>Сдано</th><th>Действия</th></tr></thead><tbody id="t-atb"></tbody></table></div>
+      </div>
+      <div class="section" id="t-students">
+        <div class="stitle">👥 Студенты</div>
+        <div class="fbar">
+          <input type="text" id="fs-s" placeholder="🔍 Поиск студента..." oninput="fStu()">
+          <select id="fs-g" onchange="fStu()"><option value="">Все группы</option></select>
+          <select id="fs-l" onchange="fStu()"><option value="">Все уровни</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select>
+          <button type="button" class="fbtn" onclick="rf('stu')">↺ Сброс</button>
+        </div>
+        <div class="scard-grid" id="t-stgrid"></div>
+      </div>
+      <div class="section" id="t-studetail">
+        <div class="back-btn" onclick="tSec('t-students')">← Назад к студентам</div>
+        <div id="t-studetail-content"></div>
+      </div>
+      <div class="section" id="t-attendance">
+        <div class="stitle">📅 Посещаемость <button type="button" class="btn" style="width:auto;padding:8px 18px;margin:0;font-size:12px" onclick="om('add-att')">+ Добавить запись</button></div>
+        <div class="fbar">
+          <input type="date" id="fat-d" onchange="fAtt()">
+          <select id="fat-g" onchange="fAtt()"><option value="">Все группы</option></select>
+          <select id="fat-s" onchange="fAtt()"><option value="">Все</option><option value="present">Присутствовал</option><option value="absent">Отсутствовал</option><option value="late">Опоздал</option></select>
+          <button type="button" class="fbtn" onclick="rf('att')">↺ Сброс</button>
+        </div>
+        <div class="tw"><div class="th2"><span class="tht">Журнал посещаемости</span><span class="tcnt" id="atc">—</span></div>
+        <table><thead><tr><th>Студент</th><th>Группа</th><th>Дата</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="t-attb"></tbody></table></div>
+      </div>
+      <div class="section" id="t-news">
+        <div class="stitle">📰 Новости <button type="button" class="btn" style="width:auto;padding:8px 18px;margin:0;font-size:12px" onclick="om('add-news')">+ Добавить новость</button></div>
+        <div class="news-grid" id="t-news-grid"></div>
+        <div class="pagination" id="t-news-pages"></div>
+      </div>
+      <div class="section" id="t-profile">
+        <div class="stitle">👤 Мой профиль</div>
+        <div class="pcard fi">
+          <div class="ppwrap">
+            <div class="pp" id="t-pp">👨‍🏫</div>
+            <label class="ped" for="t-pfi">✏️</label>
+            <input type="file" id="t-pfi" class="pfi" accept="image/*" onchange="chPhoto('t',this)">
+          </div>
+          <div class="pinfo">
+            <div class="pname" id="t-pnm">—</div>
+            <div class="prb prbt">👨‍🏫 УЧИТЕЛЬ</div>
+            <div class="pdets">
+              <div class="pdet"><div class="pdl">Логин</div><div class="pdv" id="t-plg">—</div></div>
+              <div class="pdet"><div class="pdl">Телефон</div><div class="pdv" id="t-pph">—</div></div>
+              <div class="pdet"><div class="pdl">Групп</div><div class="pdv" id="t-pgr">0</div></div>
+              <div class="pdet"><div class="pdl">Студентов</div><div class="pdv" id="t-pst">0</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">✏️ Редактировать профиль</div>
+          <div class="ig"><label class="il">Полное имя</label><div class="iw"><input type="text" id="t-edit-name" placeholder="Новое имя"></div></div>
+          <div class="ig"><label class="il">Телефон</label><div class="iw"><input type="text" id="t-edit-phone" placeholder="Телефон"></div></div>
+          <button type="button" class="btn" style="max-width:200px" onclick="saveProfile('t')">Сохранить</button>
+        </div>
+      </div>
+      <div class="section" id="t-password">
+        <div class="stitle">🔑 Сменить пароль</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:420px">
+          <div class="ig"><label class="il">Текущий пароль</label><div class="iw"><input type="password" id="t-cp" placeholder="Текущий пароль"></div></div>
+          <div class="ig"><label class="il">Новый пароль</label><div class="iw"><input type="password" id="t-np" placeholder="Новый пароль (мин. 6 символов)"></div></div>
+          <div class="ig"><label class="il">Подтвердить пароль</label><div class="iw"><input type="password" id="t-rp" placeholder="Повторите новый пароль"></div></div>
+          <div class="err" id="t-perr"></div>
+          <button type="button" class="btn" style="max-width:220px" onclick="chPass('t')">Сменить пароль</button>
+        </div>
+      </div>
+      <div class="section" id="t-support">
+        <div class="stitle">💬 Служба поддержки</div>
+        <div class="sup-grid">
+          <div class="supcard" onclick="om('ticket')"><div class="sci">🎫</div><div class="sct">Создать заявку</div><div class="scd">Опишите вашу проблему</div></div>
+          <div class="supcard" onclick="toast('📞','Звонок: +996 700 123 456')"><div class="sci">📞</div><div class="sct">Позвонить нам</div><div class="scd">+996 700 123 456</div></div>
+          <div class="supcard" onclick="toast('✉️','Email: support[at]educenter.kg')"><div class="sci">✉️</div><div class="sct">Написать на email</div><div class="scd">support[at]educenter.kg</div></div>
+          <div class="supcard" onclick="toast('💬','Открываем чат...')"><div class="sci">💬</div><div class="sct">Онлайн чат</div><div class="scd">Среднее время ответа: 5 мин</div></div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">📋 История заявок</div>
+          <table><thead><tr><th>№</th><th>Тема</th><th>Дата</th><th>Статус</th></tr></thead>
+          <tbody>
+            <tr><td>#001</td><td>Не могу войти в систему</td><td>2026-03-01</td><td><span class="badge bv">Решено ✅</span></td></tr>
+            <tr><td>#002</td><td>Ошибка при загрузке файла</td><td>2026-03-07</td><td><span class="badge bw">В работе ⏳</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══ STUDENT ══ -->
+<div class="page" id="page-student" style="flex-direction:column">
+  <nav class="navbar">
+    <div class="nlogo"><div class="lbox" style="width:34px;height:34px;font-size:16px;border-radius:8px">E</div>&nbsp;Edu<span class="dot">Center</span></div>
+    <div class="nright">
+      <div class="nbadge" onclick="sSec('s-profile')">
+        <div class="nav-av avs" id="s-nav">👨‍🎓</div>
+        <div class="ninfo"><div class="nn" id="s-nname">—</div><div class="nr rls">СТУДЕНТ</div></div>
+      </div>
+      <button type="button" class="bout" onclick="doLogout()">⬅ Выйти</button>
+    </div>
+  </nav>
+  <div class="dlayout">
+    <aside class="sidebar">
+      <div class="sgrp">Основное</div>
+      <div class="si active" id="si-s-home" onclick="sSec('s-home')"><span class="ico">🏠</span><span>Главная</span></div>
+      <div class="si" id="si-s-tasks" onclick="sSec('s-tasks')"><span class="ico">📚</span><span>Задания</span></div>
+      <div class="si" id="si-s-attendance" onclick="sSec('s-attendance')"><span class="ico">📅</span><span>Посещаемость</span></div>
+      <div class="si" id="si-s-progress" onclick="sSec('s-progress')"><span class="ico">📈</span><span>Прогресс</span></div>
+      <div class="sgrp">Личное</div>
+      <div class="si" id="si-s-news" onclick="sSec('s-news')"><span class="ico">📰</span><span>Новости</span></div>
+      <div class="si" id="si-s-payment" onclick="sSec('s-payment')"><span class="ico">💳</span><span>Оплата</span></div>
+      <div class="si" id="si-s-profile" onclick="sSec('s-profile')"><span class="ico">👤</span><span>Профиль</span></div>
+      <div class="si" id="si-s-password" onclick="sSec('s-password')"><span class="ico">🔑</span><span>Сменить пароль</span></div>
+      <div class="si" id="si-s-support" onclick="sSec('s-support')"><span class="ico">💬</span><span>Поддержка</span></div>
+    </aside>
+    <main class="dmain">
+      <div class="section active" id="s-home">
+        <div class="wbanner fi"><div class="wbt"><h2>Привет, <span id="s-wn">—</span>! 👋</h2><p>Следите за заданиями и прогрессом</p></div><div class="wbe">🎓</div></div>
+        <div class="sgrid fi1">
+          <div class="sc"><div class="si2">📚</div><div class="sn" id="ss-t">0</div><div class="sl">Заданий</div></div>
+          <div class="sc"><div class="si2">✅</div><div class="sn" id="ss-d">0</div><div class="sl">Выполнено</div></div>
+          <div class="sc"><div class="si2">⏳</div><div class="sn" id="ss-p">0</div><div class="sl">Ожидает</div></div>
+          <div class="sc"><div class="si2">⭐</div><div class="sn" id="ss-sc">—</div><div class="sl">Ср. балл</div></div>
+        </div>
+        <div class="fi2">
+          <div class="stitle" style="font-size:16px">📋 Мои задания <span id="s-group-badge" style="font-size:13px;background:rgba(77,184,255,.15);color:var(--student);padding:3px 12px;border-radius:20px;font-weight:600"></span></div>
+          <div class="tw"><table><thead><tr><th>Задание</th><th>Группа</th><th>Дедлайн</th><th>Статус</th><th>Оценка</th></tr></thead><tbody id="s-htb"></tbody></table></div>
+        </div>
+      </div>
+      <div class="section" id="s-tasks">
+        <div class="stitle">📚 Мои задания <span id="s-group-badge2" style="font-size:13px;background:rgba(77,184,255,.15);color:var(--student);padding:3px 12px;border-radius:20px;font-weight:600"></span></div>
+        <div class="fbar">
+          <input type="text" id="ft-s" placeholder="🔍 Поиск..." oninput="fTasks()">
+          <select id="ft-st" onchange="fTasks()"><option value="">Все статусы</option><option value="pending">Ожидает ⏳</option><option value="submitted">Сдано ✅</option><option value="checked">Проверено 🎯</option><option value="rejected">Отклонено ❌</option></select>
+          <button type="button" class="fbtn" onclick="rf('tasks')">↺ Сброс</button>
+        </div>
+        <div class="tw"><div class="th2"><span class="tht">Список заданий</span><span class="tcnt" id="tc">—</span></div>
+        <table><thead><tr><th>Задание</th><th>Группа</th><th>Дедлайн</th><th>Статус</th><th>Оценка</th><th>Действие</th></tr></thead><tbody id="s-ttb"></tbody></table></div>
+      </div>
+      <div class="section" id="s-attendance">
+        <div class="stitle">📅 Моя посещаемость</div>
+        <div class="fbar">
+          <select id="fsa-s" onchange="fSAtt()"><option value="">Все</option><option value="present">Присутствовал ✅</option><option value="absent">Отсутствовал ❌</option><option value="late">Опоздал ⚠️</option></select>
+          <input type="month" id="fsa-m" onchange="fSAtt()">
+          <button type="button" class="fbtn" onclick="rf('satt')">↺ Сброс</button>
+        </div>
+        <div class="tw"><div class="th2"><span class="tht">Журнал посещаемости</span><span class="tcnt" id="sac">—</span></div>
+        <table><thead><tr><th>Дата</th><th>Группа</th><th>Статус</th></tr></thead><tbody id="s-attb"></tbody></table></div>
+      </div>
+      <div class="section" id="s-progress">
+        <div class="stitle">📈 Мой прогресс</div>
+        <div class="pcard fi" style="flex-direction:column;gap:20px">
+          <div style="display:flex;gap:20px;width:100%;flex-wrap:wrap">
+            <div style="flex:1;min-width:200px">
+              <div class="pgbar"><div class="pglb"><span>Средний балл</span><span id="pg-sc" style="color:var(--yellow)">0/100</span></div><div class="pgtrack"><div class="pgfill" id="pg-sb" style="width:0%;background:linear-gradient(90deg,var(--yellow),var(--yellow2))"></div></div></div>
+              <div class="pgbar"><div class="pglb"><span>Посещаемость</span><span id="pg-at" style="color:var(--student)">0%</span></div><div class="pgtrack"><div class="pgfill" id="pg-ab" style="width:0%;background:linear-gradient(90deg,#4db8ff,#7dd3fc)"></div></div></div>
+              <div class="pgbar"><div class="pglb"><span>Выполнено заданий</span><span id="pg-tk" style="color:var(--success)">0%</span></div><div class="pgtrack"><div class="pgfill" id="pg-tb" style="width:0%;background:linear-gradient(90deg,#3ecf8e,#6ee7b7)"></div></div></div>
+            </div>
+            <div style="background:var(--surface);border-radius:14px;padding:24px;text-align:center;min-width:130px">
+              <div style="font-size:40px;margin-bottom:8px" id="pg-em">🌱</div>
+              <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:20px;color:var(--yellow)" id="pg-lv">Beginner</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">Уровень</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section" id="s-news">
+        <div class="stitle">📰 Новости</div>
+        <div class="news-grid" id="s-news-grid"></div>
+        <div class="pagination" id="s-news-pages"></div>
+      </div>
+      <div class="section" id="s-payment">
+        <div class="stitle">💳 Оплата обучения</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div class="pay-card" style="border-color:rgba(245,200,0,.3)">
+            <div class="pay-head"><span class="pay-title">Текущий баланс</span><span style="font-size:20px">💰</span></div>
+            <div class="pay-amount" id="pay-balance">0 сом</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px" id="pay-next-date">Платежей ещё нет</div>
+          </div>
+          <div class="pay-card" style="border-color:rgba(62,207,142,.3)">
+            <div class="pay-head"><span class="pay-title">Стоимость курса</span><span style="font-size:20px">📖</span></div>
+            <div class="pay-amount" style="color:var(--success)">5 000 сом / мес</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px" id="s-pay-group">—</div>
+          </div>
+        </div>
+        <div class="pay-card">
+          <div class="pay-head"><span class="pay-title">История платежей</span></div>
+          <div id="pay-history-list">
+            <div class="empty"><div class="ei">💳</div><p>Нет платежей. Нажмите «Оплатить онлайн»</p></div>
+          </div>
+        </div>
+        <button type="button" class="btn" style="max-width:240px;margin-top:16px" onclick="om('pay')">💳 Оплатить онлайн</button>
+      </div>
+      <div class="section" id="s-profile">
+        <div class="stitle">👤 Мой профиль</div>
+        <div class="pcard fi">
+          <div class="ppwrap">
+            <div class="pp" id="s-pp">👨‍🎓</div>
+            <label class="ped" for="s-pfi">✏️</label>
+            <input type="file" id="s-pfi" class="pfi" accept="image/*" onchange="chPhoto('s',this)">
+          </div>
+          <div class="pinfo">
+            <div class="pname" id="s-pnm">—</div>
+            <div class="prb prbs">👨‍🎓 СТУДЕНТ</div>
+            <div class="pdets">
+              <div class="pdet"><div class="pdl">Логин</div><div class="pdv" id="s-plg">—</div></div>
+              <div class="pdet"><div class="pdl">Телефон</div><div class="pdv" id="s-pph">—</div></div>
+              <div class="pdet"><div class="pdl">Группа</div><div class="pdv" id="s-pgr">—</div></div>
+              <div class="pdet"><div class="pdl">Уровень</div><div class="pdv"><span class="badge bb" id="s-plv">Beginner</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">✏️ Редактировать профиль</div>
+          <div class="ig"><label class="il">Полное имя</label><div class="iw"><input type="text" id="s-edit-name" placeholder="Новое имя"></div></div>
+          <div class="ig"><label class="il">Телефон</label><div class="iw"><input type="text" id="s-edit-phone" placeholder="Телефон"></div></div>
+          <button type="button" class="btn" style="max-width:200px" onclick="saveProfile('s')">Сохранить</button>
+        </div>
+      </div>
+      <div class="section" id="s-password">
+        <div class="stitle">🔑 Сменить пароль</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:420px">
+          <div class="ig"><label class="il">Текущий пароль</label><div class="iw"><input type="password" id="s-cp" placeholder="Текущий пароль"></div></div>
+          <div class="ig"><label class="il">Новый пароль</label><div class="iw"><input type="password" id="s-np" placeholder="Новый пароль"></div></div>
+          <div class="ig"><label class="il">Подтвердить</label><div class="iw"><input type="password" id="s-rp" placeholder="Повторите пароль"></div></div>
+          <div class="err" id="s-perr"></div>
+          <button type="button" class="btn" style="max-width:220px" onclick="chPass('s')">Сменить пароль</button>
+        </div>
+      </div>
+      <div class="section" id="s-support">
+        <div class="stitle">💬 Служба поддержки</div>
+        <div class="sup-grid">
+          <div class="supcard" onclick="om('ticket')"><div class="sci">🎫</div><div class="sct">Создать заявку</div><div class="scd">Опишите вашу проблему</div></div>
+          <div class="supcard" onclick="toast('📞','Звонок: +996 700 123 456')"><div class="sci">📞</div><div class="sct">Позвонить нам</div><div class="scd">+996 700 123 456</div></div>
+          <div class="supcard" onclick="toast('✉️','Email: support[at]educenter.kg')"><div class="sci">✉️</div><div class="sct">Написать на email</div><div class="scd">support[at]educenter.kg</div></div>
+          <div class="supcard" onclick="toast('💬','Открываем чат...')"><div class="sci">💬</div><div class="sct">Онлайн чат</div><div class="scd">Среднее время ответа: 5 мин</div></div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;margin-bottom:14px">📋 Мои заявки</div>
+          <div class="empty"><div class="ei">🎫</div><p>У вас нет активных заявок</p></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="mo" id="modal-add-asgn">
+  <div class="md">
+    <div class="mdt" id="asgn-modal-title">📚 Добавить задание <button type="button" class="mcl" onclick="cm('add-asgn')">×</button></div>
+    <input type="hidden" id="ma-edit-id" value="">
+    <div class="ig"><label class="il">Название</label><div class="iw"><input type="text" id="ma-t" placeholder="Название задания"></div></div>
+    <div class="ig"><label class="il">Группа</label><div class="iw"><select id="ma-g"></select></div></div>
+    <div class="ig"><label class="il">Описание</label><div class="iw"><textarea id="ma-d" placeholder="Описание..."></textarea></div></div>
+    <div class="ig"><label class="il">Дедлайн</label><div class="iw"><input type="date" id="ma-dl"></div></div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('add-asgn')">Отмена</button><button type="button" class="btn" style="margin:0" id="asgn-save-btn" onclick="addAsgn()">Добавить</button></div>
+  </div>
+</div>
+<div class="mo" id="modal-submit">
+  <div class="md">
+    <div class="mdt">📤 Сдать задание <button type="button" class="mcl" onclick="cm('submit')">×</button></div>
+    <div style="font-family:Montserrat,sans-serif;font-weight:700;color:var(--yellow);margin-bottom:16px" id="submit-nm">—</div>
+    <div class="ig"><label class="il">Комментарий</label><div class="iw"><textarea id="ms-c" placeholder="Ваш комментарий..."></textarea></div></div>
+    <div class="ig"><label class="il">Прикрепить файл</label><div class="iw"><input type="file" id="ms-f" style="padding:10px 14px"></div></div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('submit')">Отмена</button><button type="button" class="btn" style="margin:0" onclick="doSubmit()">Отправить</button></div>
+  </div>
+</div>
+<div class="mo" id="modal-ticket">
+  <div class="md">
+    <div class="mdt">🎫 Создать заявку <button type="button" class="mcl" onclick="cm('ticket')">×</button></div>
+    <div class="ig"><label class="il">Тема</label><div class="iw"><input type="text" id="tkt-t" placeholder="Тема обращения"></div></div>
+    <div class="ig"><label class="il">Описание проблемы</label><div class="iw"><textarea id="tkt-d" placeholder="Подробно опишите проблему..."></textarea></div></div>
+    <div class="ig"><label class="il">Приоритет</label><div class="iw"><select id="tkt-p"><option>Обычный</option><option>Высокий</option><option>Срочный</option></select></div></div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('ticket')">Отмена</button><button type="button" class="btn" style="margin:0" onclick="sendTicket()">Отправить</button></div>
+  </div>
+</div>
+<div class="mo" id="modal-pay">
+  <div class="md">
+    <div class="mdt">💳 Оплата обучения <button type="button" class="mcl" onclick="cm('pay')">×</button></div>
+    <div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:18px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Сумма к оплате</div>
+      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:28px;color:var(--yellow)">5 000 сом</div>
+    </div>
+    <div class="ig"><label class="il">Способ оплаты</label><div class="iw"><select id="pay-m"><option>Visa / Mastercard</option><option>Элсом</option><option>О!Деньги</option><option>MBank</option></select></div></div>
+    <div class="ig"><label class="il">Номер карты</label><div class="iw"><input type="text" id="pay-c" placeholder="0000 0000 0000 0000" maxlength="19"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="ig"><label class="il">Срок действия</label><div class="iw"><input type="text" id="pay-e" placeholder="MM/YY" maxlength="5"></div></div>
+      <div class="ig"><label class="il">CVV</label><div class="iw"><input type="password" id="pay-v" placeholder="***" maxlength="3"></div></div>
+    </div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('pay')">Отмена</button><button type="button" class="btn" style="margin:0" onclick="doPay()">Оплатить</button></div>
+  </div>
+</div>
+
+<!-- MODAL: ADD NEWS -->
+<div class="mo" id="modal-add-news">
+  <div class="md">
+    <div class="mdt">📰 Добавить новость <button type="button" class="mcl" onclick="cm('add-news')">×</button></div>
+    <div class="ig"><label class="il">Заголовок</label><div class="iw"><input type="text" id="an-title" placeholder="Заголовок новости (мин. 5 символов)" maxlength="120"></div></div>
+    <div class="ig"><label class="il">Категория / Тег</label><div class="iw"><input type="text" id="an-tag" placeholder="Например: Python, Дизайн, Конкурс" maxlength="30"></div></div>
+    <div class="ig"><label class="il">Краткое описание</label><div class="iw"><textarea id="an-desc" placeholder="Краткое описание новости..." maxlength="300"></textarea></div></div>
+    <div class="ig"><label class="il">Иконка (эмодзи)</label><div class="iw"><input type="text" id="an-icon" placeholder="🐍" maxlength="4" style="font-size:22px;text-align:center"></div></div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('add-news')">Отмена</button><button type="button" class="btn" style="margin:0" onclick="addNews()">Опубликовать</button></div>
+  </div>
+</div>
+<!-- MODAL: ADD ATTENDANCE -->
+<div class="mo" id="modal-add-att">
+  <div class="md">
+    <div class="mdt">📅 Добавить посещаемость <button type="button" class="mcl" onclick="cm('add-att')">×</button></div>
+    <div class="ig"><label class="il">Студент</label><div class="iw"><select id="aa-stu" style="width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;color:#fff;font-size:14px;font-family:Open Sans,sans-serif;outline:none"></select></div></div>
+    <div class="ig"><label class="il">Дата</label><div class="iw"><input type="date" id="aa-date" style="width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;color:#fff;font-size:14px;outline:none"></div></div>
+    <div class="ig"><label class="il">Статус</label><div class="iw"><select id="aa-st" style="width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;color:#fff;font-size:14px;font-family:Open Sans,sans-serif;outline:none">
+      <option value="present">Присутствовал ✅</option>
+      <option value="absent">Отсутствовал ❌</option>
+      <option value="late">Опоздал ⚠️</option>
+    </select></div></div>
+    <div class="mfoot"><button type="button" class="bcl" onclick="cm('add-att')">Отмена</button><button type="button" class="btn" style="margin:0" onclick="addAttRecord()">Добавить</button></div>
+  </div>
+</div>
+<script>
+// ── DATA ──
+let users = JSON.parse(localStorage.getItem('ec_users') || '[]');
+let cu = null, regRole = 'teacher', loginRole = 'teacher', subId = null;
+let myTasks = [], myAtt = [];
+
+// Новости — хранятся в localStorage, учитель может добавлять
+const defaultNews = [
+  {id:1,thumb:'nt1',icon:'🐍',tag:'Python',title:'Новый курс: Python Advanced запускается в апреле',desc:'Открыта запись на новый курс по продвинутому Python. Старт 1 апреля 2026.',date:'9 марта 2026'},
+  {id:2,thumb:'nt2',icon:'🎨',tag:'Дизайн',title:'Бесплатный мастер-класс по UI/UX дизайну',desc:'Приглашаем всех студентов на бесплатный онлайн мастер-класс 15 марта.',date:'8 марта 2026'},
+  {id:3,thumb:'nt3',icon:'🏆',tag:'Конкурс',title:'Хакатон EduCenter 2026 — призовой фонд 50 000 сом',desc:'Регистрация команд открыта. Тема: образовательные технологии будущего.',date:'7 марта 2026'},
+  {id:4,thumb:'nt4',icon:'📊',tag:'Аналитика',title:'Карьерный день — встреча с работодателями',desc:'5 ведущих IT-компаний Бишкека придут к нам 20 марта. Не пропустите!',date:'5 марта 2026'},
+  {id:5,thumb:'nt1',icon:'🤖',tag:'AI',title:'Введение в искусственный интеллект — новый модуль',desc:'Добавлен новый модуль по основам AI и машинному обучению.',date:'3 марта 2026'},
+  {id:6,thumb:'nt2',icon:'📱',tag:'Мобильная разработка',title:'Курс Flutter: создание мобильных приложений',desc:'Стартует новый курс по кроссплатформенной разработке на Flutter.',date:'1 марта 2026'},
+];
+let newsData = JSON.parse(localStorage.getItem('ec_news') || JSON.stringify(defaultNews));
+const NEWS_PER_PAGE = 4;
+let newsPageT = 1;
+let newsPageS = 1;
+
+// Все задания системы (учитель видит все, студент — только свою группу)
+// Задания — учитель сам добавляет, загружаем из localStorage
+let allAsgn = JSON.parse(localStorage.getItem('ec_asgn')||'[]');
+let demoAsgn = [...allAsgn];
+
+// Все студенты (учитель видит всех, студент — только свою группу в карточках)
+// Студенты — только реально зарегистрированные пользователи
+// Функция перезагружает список из localStorage
+function loadStuList(){
+  return users.filter(u=>u.role==='student').map(u=>({
+    id: u.login,
+    name: u.name,
+    group: u.group||'—',
+    level: u.level||'Beginner',
+    score: u.score||0,
+    att: u.att||0,
+    photo: u.photo||null
+  }));
+}
+let allStu = loadStuList();
+let demoStu = [...allStu];
+
+// Посещаемость — пустая, учитель отмечает сам
+let demoAtt = JSON.parse(localStorage.getItem('ec_att')||'[]');
+
+
+// Посещаемость хранится в demoAtt (localStorage)
+
+// ── NAVIGATION ──
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active')}
+function tSec(id){
+  document.querySelectorAll('#page-teacher .section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#page-teacher .si').forEach(s=>s.classList.remove('active'));
+  const si=document.getElementById('si-'+id);if(si)si.classList.add('active');
+}
+function sSec(id){
+  document.querySelectorAll('#page-student .section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#page-student .si').forEach(s=>s.classList.remove('active'));
+  const si=document.getElementById('si-'+id);if(si)si.classList.add('active');
+}
+
+// ── ROLE SELECT ──
+function setRole(f,r){
+  if(f==='reg'){
+    regRole=r;
+    document.getElementById('rr-t').className='rc'+(r==='teacher'?' at':'');
+    document.getElementById('rr-s').className='rc'+(r==='student'?' as':'');
+    // показываем поле группа только для студента
+    document.getElementById('rg-group-row').style.display = r==='student' ? 'block' : 'none';
+  } else {
+    loginRole=r;
+    document.getElementById('lr-t').className='rc'+(r==='teacher'?' at':'');
+    document.getElementById('lr-s').className='rc'+(r==='student'?' as':'');
+  }
+}
+
+function teye(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'👁':'🙈'}
+
+// ── REGISTER ──
+function doReg(){
+  const name=v('rg-name'), login=v('rg-login'), phone=v('rg-phone'), pass=v('rg-pass');
+  const group = regRole==='student' ? v('rg-group') : '';
+  const err=document.getElementById('reg-err');
+  // Обязательные поля
+  if(!name||!login||!pass){return se(err,'Заполните все обязательные поля')}
+  // Длина имени
+  if(name.length<2){return se(err,'Имя минимум 2 символа')}
+  if(name.length>60){return se(err,'Имя максимум 60 символов')}
+  // Логин: длина + формат
+  if(login.length<3){return se(err,'Логин минимум 3 символа')}
+  if(login.length>30){return se(err,'Логин максимум 30 символов')}
+  if(!/^[a-zA-Z0-9_-]+$/.test(login)){return se(err,'Логин: только буквы, цифры, _ и -')}
+  // Телефон — если введён
+  if(phone && !/^[\+\d\s\-\(\)]{7,20}$/.test(phone)){return se(err,'Неверный формат телефона (+996 700 000 000)')}
+  // Пароль
+  if(pass.length<6){return se(err,'Пароль минимум 6 символов')}
+  if(pass.length>50){return se(err,'Пароль максимум 50 символов')}
+  // Группа для студента
+  if(regRole==='student'&&!group){return se(err,'Студент должен указать название группы')}
+  if(regRole==='student'&&group.length<2){return se(err,'Название группы минимум 2 символа')}
+  // Уникальность логина
+  if(users.find(u=>u.login===login)){return se(err,'Этот логин уже занят')}
+  err.classList.remove('show');
+  users.push({name,login,phone,pass,role:regRole,group,photo:null});
+  localStorage.setItem('ec_users',JSON.stringify(users));
+  // allStu автоматически обновится когда учитель войдёт (через loadStuList)
+  toast('✅','Регистрация успешна!');
+  ['rg-name','rg-login','rg-phone','rg-pass','rg-group'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  setTimeout(()=>go('login'),900);
+}
+
+// ── LOGIN ──
+function doLogin(){
+  const login=v('ll'), pass=v('lp');
+  const err=document.getElementById('login-err');
+  if(!login||!pass){return se(err,'Введите логин и пароль')}
+  if(login.length<3){return se(err,'Логин минимум 3 символа')}
+  const user=users.find(u=>u.login===login&&u.pass===pass&&u.role===loginRole);
+  if(!user){return se(err,'Неверный логин, пароль или роль')}
+  err.classList.remove('show');
+  cu=user;
+  user.role==='teacher'?loadTeacher(user):loadStudent(user);
+  toast('👋','Добро пожаловать, '+user.name+'!');
+}
+
+function doLogout(){
+  cu=null;
+  document.getElementById('ll').value='';
+  document.getElementById('lp').value='';
+  // Сбрасываем фото инпуты
+  const tpfi=document.getElementById('t-pfi');if(tpfi)tpfi.value='';
+  const spfi=document.getElementById('s-pfi');if(spfi)spfi.value='';
+  toast('👋','Вы вышли из системы');
+  setTimeout(()=>go('register'),700);
+}
+
+// ── GROUPS HELPER ──
+function getGroups(){
+  const groups = new Set(allAsgn.map(a=>a.group));
+  allStu.forEach(s=>groups.add(s.group));
+  users.filter(u=>u.role==='student'&&u.group).forEach(u=>groups.add(u.group));
+  return [...groups].sort();
+}
+
+function updateGroupSelects(){
+  const groups = getGroups();
+  const selects = ['fa-g','fs-g','fat-g'];
+  selects.forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Все группы</option>' + groups.map(g=>`<option value="${g}">${g}</option>`).join('');
+    sel.value = cur;
+  });
+  // modal add assignment group select
+  const mag = document.getElementById('ma-g');
+  if(mag){
+    const cur = mag.value;
+    mag.innerHTML = groups.map(g=>`<option value="${g}">${g}</option>`).join('');
+    if(cur) mag.value=cur;
+  }
+}
+
+// ── TEACHER ──
+function loadTeacher(u){
+  // Обновляем список студентов из свежих данных localStorage
+  allStu = loadStuList();
+  demoStu = [...allStu];
+  document.getElementById('t-nname').textContent=u.name;
+  document.getElementById('t-wn').textContent=u.name.split(' ')[0];
+  document.getElementById('t-pnm').textContent=u.name;
+  document.getElementById('t-plg').textContent=u.login;
+  document.getElementById('t-pph').textContent=u.phone||'—';
+  document.getElementById('t-edit-name').value=u.name;
+  document.getElementById('t-edit-phone').value=u.phone||'';
+  const groups = getGroups();
+  document.getElementById('t-pgr').textContent=groups.length;
+  document.getElementById('t-pst').textContent=allStu.length;
+  document.getElementById('ts-s').textContent=allStu.length;
+  document.getElementById('ts-a').textContent=demoAsgn.length;
+  document.getElementById('ts-d').textContent=demoAsgn.reduce((a,x)=>a+x.submitted,0);
+  document.getElementById('ts-p').textContent=demoAsgn.reduce((a,x)=>a+(x.total-x.submitted),0);
+  // Всегда сбрасываем фото
+  if(u.photo){
+    setPhUI('t', u.photo);
+  } else {
+    document.getElementById('t-nav').innerHTML='👨‍🏫';
+    document.getElementById('t-pp').innerHTML='👨‍🏫';
+  }
+  updateGroupSelects();
+  renderTHome(); renderAsgn(demoAsgn); renderStuGrid(allStu); renderAtt(demoAtt); renderNews('t');
+  go('teacher');
+}
+
+// Считаем реальные счётчики из ec_asgn_status
+function calcRealStats(){
+  const statuses=JSON.parse(localStorage.getItem('ec_asgn_status')||'{}');
+  let done=0,pending=0;
+  Object.values(statuses).forEach(s=>{
+    if(s.status==='checked') done++;
+    else if(s.status==='pending'||s.status==='submitted') pending++;
+  });
+  return {done,pending};
+}
+function updateHomeCounters(){
+  const {done,pending}=calcRealStats();
+  document.getElementById('ts-d').textContent=done;
+  document.getElementById('ts-p').textContent=pending;
+  document.getElementById('ts-a').textContent=demoAsgn.length;
+  document.getElementById('ts-s').textContent=allStu.length;
+}
+function renderTHome(){
+  const statuses=JSON.parse(localStorage.getItem('ec_asgn_status')||'{}');
+  document.getElementById('t-htb').innerHTML=demoAsgn.slice(0,4).map(a=>{
+    const done=Object.entries(statuses).filter(([k,v])=>k.endsWith('_'+a.id)&&v.status==='checked').length;
+    const sub=Object.entries(statuses).filter(([k,v])=>k.endsWith('_'+a.id)&&v.status==='submitted').length;
+    const lbl=done>0?`<span style="color:var(--success);font-weight:700">${done} принято ✅</span>`
+              :sub>0?`<span style="color:var(--student);font-weight:700">${sub} на проверке 📤</span>`
+              :`<span style="color:var(--muted)">Ожидает ⏳</span>`;
+    return `<tr><td><b>${a.title}</b></td><td>${a.group}</td><td>${a.deadline}</td><td>${lbl}</td></tr>`;
+  }).join('')||`<tr><td colspan="4"><div class="empty"><div class="ei">📭</div><p>Нет заданий</p></div></td></tr>`;
+  updateHomeCounters();
+}
+function renderAsgn(data){
+  document.getElementById('ac').textContent=data.length+' заданий';
+  const statuses = JSON.parse(localStorage.getItem('ec_asgn_status')||'{}');
+  document.getElementById('t-atb').innerHTML=data.length?data.map(a=>{
+    const done = Object.entries(statuses).filter(([k,v])=>k.endsWith('_'+a.id)&&v.status==='checked').length;
+    const sub  = Object.entries(statuses).filter(([k,v])=>k.endsWith('_'+a.id)&&v.status==='submitted').length;
+    const pend = allStu.filter(s=>s.group===a.group).length - done - sub;
+    return `<tr>
+      <td><b>${a.title}</b></td>
+      <td>${a.group}</td>
+      <td>${a.deadline}</td>
+      <td>
+        <span style="color:var(--success);font-weight:700">${done} ✅</span>
+        ${sub>0?`<span style="color:var(--student);margin-left:6px">${sub} 📤</span>`:''}
+        ${pend>0?`<span style="color:var(--muted);margin-left:6px">${pend} ⏳</span>`:''}
+      </td>
+      <td style="display:flex;gap:6px">
+        <button type="button" class="ab aby" onclick="editAsgn(${JSON.stringify(a.id)})">✏️ Изм.</button>
+        <button type="button" class="ab abr" onclick="delAsgn(${JSON.stringify(a.id)})">🗑️ Удал.</button>
+      </td></tr>`;
+  }).join('')
+  :`<tr><td colspan="5"><div class="empty"><div class="ei">📭</div><p>Нет заданий. Нажмите + Добавить</p></div></td></tr>`;
+}
+function delAsgn(id){
+  const i=demoAsgn.findIndex(a=>a.id===id);
+  if(i>=0){demoAsgn.splice(i,1);renderAsgn(demoAsgn);renderTHome();document.getElementById('ts-a').textContent=demoAsgn.length;toast('🗑️','Задание удалено')}
+}
+function renderStuGrid(data){
+  const lm={Beginner:'bb',Intermediate:'bi',Advanced:'bv'};
+  document.getElementById('t-stgrid').innerHTML=data.length?data.map(s=>`
+    <div class="stucard" onclick="showStuDetail('${s.id}')">
+      <div class="stav">${s.photo?`<img src="${s.photo}">`:'👨‍🎓'}</div>
+      <div class="stname">${s.name}</div>
+      <div class="stmeta">${s.group} · <span class="badge ${lm[s.level]||'bb'}" style="font-size:10px">${s.level}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+        <span style="color:var(--muted)">Балл: <b style="color:var(--yellow)">${s.score}</b></span>
+        <span style="color:var(--muted)">Посещ: <b style="color:var(--success)">${s.att}%</b></span>
+      </div>
+      <div class="stprog"><div class="stpf" style="width:${s.score}%"></div></div>
+    </div>`).join('')
+    :`<div style="grid-column:1/-1"><div class="empty"><div class="ei">👥</div><p>Нет студентов</p></div></div>`;
+}
+// Статусы заданий по студентам: { "stuId_asgnId": {status, score} }
+let asgnStatuses = JSON.parse(localStorage.getItem('ec_asgn_status')||'{}');
+
+function getAsgnStatus(stuId, asgnId){
+  return asgnStatuses[stuId+'_'+asgnId] || {status:'pending', score:null};
+}
+function setAsgnStatus(stuId, asgnId, status, score){
+  asgnStatuses[stuId+'_'+asgnId] = {status, score: score||null};
+  localStorage.setItem('ec_asgn_status', JSON.stringify(asgnStatuses));
+}
+
+// Карта статусов для отображения
+const asgnStatusMap = {
+  pending:   {cls:'bw', label:'Ожидает ⏳'},
+  submitted: {cls:'bb', label:'Сдано 📤'},
+  checked:   {cls:'bd', label:'Выполнено ✅'},
+  rejected:  {cls:'br', label:'Отклонено ❌'},
+};
+
+function showStuDetail(id){
+  const s=allStu.find(x=>String(x.id)===String(id));if(!s)return;
+  const lm={Beginner:'bb',Intermediate:'bi',Advanced:'bv'};
+  const stuAsgn=demoAsgn.filter(a=>a.group===s.group);
+
+  // Считаем статистику по реальным статусам
+  const doneCount = stuAsgn.filter(a=>getAsgnStatus(s.id,a.id).status==='checked').length;
+  const totalCount = stuAsgn.length;
+
+  document.getElementById('t-studetail-content').innerHTML=`
+    <div class="pcard fi">
+      <div class="ppwrap"><div class="pp">${s.photo?`<img src="${s.photo}">`:'👨‍🎓'}</div></div>
+      <div class="pinfo">
+        <div class="pname">${s.name}</div>
+        <div class="prb prbs">👨‍🎓 СТУДЕНТ</div>
+        <div class="pdets">
+          <div class="pdet"><div class="pdl">Группа</div><div class="pdv">${s.group}</div></div>
+          <div class="pdet"><div class="pdl">Уровень</div><div class="pdv" style="display:flex;align-items:center;gap:8px">
+            <span class="badge ${lm[s.level]||'bb'}" id="stu-level-badge">${s.level}</span>
+            <select onchange="changeLevel('${s.id}',this.value)" style="background:var(--surface);border:1.5px solid var(--border);border-radius:8px;color:#fff;font-size:11px;padding:3px 8px;outline:none;cursor:pointer">
+              <option value="Beginner" ${s.level==='Beginner'?'selected':''}>Beginner</option>
+              <option value="Intermediate" ${s.level==='Intermediate'?'selected':''}>Intermediate</option>
+              <option value="Advanced" ${s.level==='Advanced'?'selected':''}>Advanced</option>
+            </select>
+          </div></div>
+          <div class="pdet"><div class="pdl">Средний балл</div><div class="pdv" style="color:var(--yellow);font-weight:800">${s.score}</div></div>
+          <div class="pdet"><div class="pdl">Посещаемость</div><div class="pdv" style="color:var(--success)">${s.att}%</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+        <div class="pgbar" style="margin:0">
+          <div class="pglb"><span>Средний балл</span><span style="color:var(--yellow)">${s.score}/100</span></div>
+          <div class="pgtrack"><div class="pgfill" style="width:${s.score}%;background:linear-gradient(90deg,var(--yellow),var(--yellow2))"></div></div>
+        </div>
+        <div class="pgbar">
+          <div class="pglb"><span>Посещаемость</span><span style="color:var(--success)">${s.att}%</span></div>
+          <div class="pgtrack"><div class="pgfill" style="width:${s.att}%;background:linear-gradient(90deg,#3ecf8e,#6ee7b7)"></div></div>
+        </div>
+        <div class="pgbar">
+          <div class="pglb"><span>Выполнено заданий</span><span style="color:var(--success)">${totalCount?Math.round(doneCount/totalCount*100):0}%</span></div>
+          <div class="pgtrack"><div class="pgfill" style="width:${totalCount?Math.round(doneCount/totalCount*100):0}%;background:linear-gradient(90deg,#3ecf8e,#6ee7b7)"></div></div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">${s.score>=80?'🏆':s.score>=60?'📈':'🌱'}</div>
+        <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:var(--yellow)">${s.level}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Уровень</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)">Выполнено</div>
+        <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:20px;color:var(--success)">${doneCount}/${totalCount}</div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:20px">
+      <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--muted)">📅 ПОСЕЩАЕМОСТЬ</div>
+      ${(()=>{
+        const att=demoAtt.filter(a=>a.student===s.name).slice(0,5);
+        const sm={present:'bp',absent:'ba',late:'bl'};
+        const sl={present:'Присутствовал ✅',absent:'Отсутствовал ❌',late:'Опоздал ⚠️'};
+        return att.length
+          ? att.map(a=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${a.date}</span><span class="badge ${sm[a.status]}">${sl[a.status]}</span></div>`).join('')
+          : '<div class="empty"><div class="ei">📅</div><p>Нет записей посещаемости</p></div>';
+      })()}
+    </div>
+    <div class="stitle" style="font-size:16px;margin-bottom:14px">📚 Задания группы ${s.group}
+      <button type="button" class="btn" style="width:auto;padding:7px 16px;margin:0;font-size:12px" onclick="om('add-asgn')">+ Добавить</button>
+    </div>
+    <div class="tw" id="stu-asgn-table">
+      <table><thead><tr><th>Задание</th><th>Дедлайн</th><th>Статус</th><th>Оценка</th><th>Действия</th></tr></thead>
+      <tbody id="stu-asgn-tbody">${renderStuAsgnRows(s, stuAsgn)}</tbody></table>
+    </div>`;
+  tSec('t-studetail');
+}
+
+function renderStuAsgnRows(s, stuAsgn){
+  if(!stuAsgn.length) return '<tr><td colspan="5"><div class="empty"><div class="ei">📭</div><p>Нет заданий. Нажмите + Добавить</p></div></td></tr>';
+  return stuAsgn.map(a=>{
+    const st = getAsgnStatus(s.id, a.id);
+    const sm = asgnStatusMap[st.status] || asgnStatusMap.pending;
+    const canAccept = st.status !== 'checked';
+    const canReject = st.status !== 'rejected';
+    return `<tr id="asgn-row-${s.id}-${a.id}">
+      <td><b>${a.title}</b></td>
+      <td>${a.deadline}</td>
+      <td><span class="badge ${sm.cls}">${sm.label}</span></td>
+      <td style="color:var(--yellow);font-weight:700">${st.score||'—'}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap">
+        ${canAccept?`<button type="button" class="ab abg" onclick="teacherAccept('${s.id}',${JSON.stringify(a.id)},'${s.name}','${a.title}')">✅ Принять</button>`:''}
+        ${canReject?`<button type="button" class="ab abr" onclick="teacherReject('${s.id}',${JSON.stringify(a.id)},'${s.name}','${a.title}')">❌ Отклонить</button>`:''}
+        ${st.status==='checked'?'<span style="color:var(--success);font-size:12px;font-weight:700">✅ Принято</span>':''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function changeLevel(stuId, newLevel){
+  // Сохраняем в users
+  const ui = users.findIndex(u=>u.login===stuId||u.login===String(stuId));
+  if(ui>=0){
+    users[ui].level = newLevel;
+    localStorage.setItem('ec_users', JSON.stringify(users));
+  }
+  // Обновляем в allStu
+  const si = allStu.findIndex(s=>String(s.id)===String(stuId));
+  if(si>=0) allStu[si].level = newLevel;
+
+  // Обновляем бейдж уровня в карточке
+  const lm={Beginner:'bb',Intermediate:'bi',Advanced:'bv'};
+  const badge = document.getElementById('stu-level-badge');
+  if(badge){
+    badge.className = 'badge '+(lm[newLevel]||'bb');
+    badge.textContent = newLevel;
+  }
+  toast('⭐', 'Уровень студента изменён: '+newLevel);
+}
+
+function teacherAccept(stuId, asgnId, stuName, asgnTitle){
+  const score=prompt('Оценка за задание "'+asgnTitle+'" (0-100):', '85');
+  if(score===null) return;
+  const sc=parseInt(score);
+  if(isNaN(sc)||sc<0||sc>100){toast('❗','Оценка должна быть от 0 до 100');return;}
+  setAsgnStatus(stuId,asgnId,'checked',sc);
+  // Обновляем таблицу студента
+  const s=allStu.find(x=>String(x.id)===String(stuId));
+  if(s){
+    const stuAsgn=demoAsgn.filter(a=>a.group===s.group);
+    const tbody=document.getElementById('stu-asgn-tbody');
+    if(tbody) tbody.innerHTML=renderStuAsgnRows(s,stuAsgn);
+  }
+  // Обновляем счётчики главной страницы и таблицу заданий
+  updateHomeCounters();
+  renderTHome();
+  renderAsgn(demoAsgn);
+  toast('✅',stuName+' — задание принято! Оценка: '+sc);
+}
+
+function teacherReject(stuId, asgnId, stuName, asgnTitle){
+  setAsgnStatus(stuId,asgnId,'rejected',null);
+  const s=allStu.find(x=>String(x.id)===String(stuId));
+  if(s){
+    const stuAsgn=demoAsgn.filter(a=>a.group===s.group);
+    const tbody=document.getElementById('stu-asgn-tbody');
+    if(tbody) tbody.innerHTML=renderStuAsgnRows(s,stuAsgn);
+  }
+  updateHomeCounters();
+  renderTHome();
+  renderAsgn(demoAsgn);
+  toast('❌',stuName+' — задание отклонено');
+}
+
+function renderAtt(data){
+  document.getElementById('atc').textContent=data.length+' записей';
+  const sm={present:['bp','Присутствовал ✅'],absent:['ba','Отсутствовал ❌'],late:['bl','Опоздал ⚠️']};
+  document.getElementById('t-attb').innerHTML=data.length?data.map(a=>`
+    <tr><td><b>${a.student}</b></td><td>${a.group}</td><td>${a.date}</td>
+    <td><span class="badge ${sm[a.status][0]}">${sm[a.status][1]}</span></td>
+    <td style="display:flex;gap:5px">
+      <button type="button" class="ab abg" onclick="markAtt('${a.student}','${a.group}','${a.date}','present')">✅</button>
+      <button type="button" class="ab abr" onclick="markAtt('${a.student}','${a.group}','${a.date}','absent')">❌</button>
+      <button type="button" class="ab" style="background:rgba(245,200,0,.15);color:var(--yellow)" onclick="markAtt('${a.student}','${a.group}','${a.date}','late')">⚠️</button>
+    </td></tr>`).join('')
+    :`<tr><td colspan="5"><div class="empty"><div class="ei">📅</div><p>Нет записей</p></div></td></tr>`;
+}
+// Цвета для новых карточек
+const thumbColors = ['nt1','nt2','nt3','nt4'];
+
+function renderNews(prefix){
+  const page = prefix==='t' ? newsPageT : newsPageS;
+  const total = newsData.length;
+  const totalPages = Math.ceil(total / NEWS_PER_PAGE);
+  const start = (page-1)*NEWS_PER_PAGE;
+  const pageNews = newsData.slice(start, start+NEWS_PER_PAGE);
+  const isTeacher = prefix==='t';
+
+  // Карточки
+  let cardsHtml = pageNews.map(n=>`
+    <div class="ncard">
+      <div class="nthumb ${n.thumb||'nt1'}" style="position:relative">
+        <span style="font-size:42px">${n.icon}</span>
+        ${isTeacher?`<button type="button" onclick="deleteNews(${n.id})" style="position:absolute;top:8px;right:8px;background:rgba(255,92,92,.85);border:none;border-radius:7px;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;cursor:pointer">🗑 Удалить</button>`:''}
+      </div>
+      <div class="nbody">
+        <div class="ntag">${n.tag}</div>
+        <div class="nnm">${n.title}</div>
+        ${n.desc?`<div style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5">${n.desc}</div>`:''}
+        <div class="ndt">📅 ${n.date}</div>
+      </div>
+    </div>`).join('');
+
+  // Если учитель и на последней странице — добавить кнопку "+"
+  if(isTeacher){
+    const lastPage = Math.ceil((total+1)/NEWS_PER_PAGE);
+    if(page===totalPages || totalPages===0){
+      cardsHtml += `<div class="nadd-card" onclick="om('add-news')">
+        <div class="nadd-icon">➕</div>
+        <div class="nadd-text">Добавить новость</div>
+        <div class="nadd-sub">Нажмите чтобы опубликовать</div>
+      </div>`;
+    }
+  }
+
+  document.getElementById(prefix+'-news-grid').innerHTML = cardsHtml || '<div class="empty"><div class="ei">📰</div><p>Нет новостей</p></div>';
+
+  // Пагинация
+  const pagesEl = document.getElementById(prefix+'-news-pages');
+  if(!pagesEl) return;
+  if(totalPages<=1){pagesEl.innerHTML='';return;}
+  let pg='';
+  if(page>1) pg+=`<div class="ppage prev" onclick="newsGo('${prefix}',${page-1})">◀ Назад</div>`;
+  for(let i=1;i<=totalPages;i++){
+    pg+=`<div class="ppage${i===page?' active':''}" onclick="newsGo('${prefix}',${i})">${i}</div>`;
+  }
+  if(page<totalPages) pg+=`<div class="ppage next" onclick="newsGo('${prefix}',${page+1})">Вперёд ▶</div>`;
+  pg+=`<div style="font-size:12px;color:var(--muted);margin-left:8px">${start+1}–${Math.min(start+NEWS_PER_PAGE,total)} из ${total}</div>`;
+  pagesEl.innerHTML=pg;
+}
+
+function newsGo(prefix, page){
+  if(prefix==='t') newsPageT=page;
+  else newsPageS=page;
+  renderNews(prefix);
+  // Скролл вверх к секции
+  const sec = document.getElementById(prefix==='t'?'t-news':'s-news');
+  if(sec) sec.scrollTop=0;
+}
+
+function deleteNews(id){
+  if(!confirm('Удалить эту новость?')) return;
+  const idx = newsData.findIndex(n=>n.id===id);
+  if(idx>=0){
+    newsData.splice(idx,1);
+    localStorage.setItem('ec_news',JSON.stringify(newsData));
+    // Если страница стала пустой — перейти назад
+    const totalPages=Math.max(1,Math.ceil(newsData.length/NEWS_PER_PAGE));
+    if(newsPageT>totalPages) newsPageT=totalPages;
+    renderNews('t');
+    toast('🗑️','Новость удалена');
+  }
+}
+
+function addNews(){
+  const title=v('an-title'), tag=v('an-tag'), desc=v('an-desc'), icon=v('an-icon');
+  // Валидация
+  if(!title){return toast('❗','Введите заголовок новости')}
+  if(title.length<5){return toast('❗','Заголовок минимум 5 символов')}
+  if(title.length>120){return toast('❗','Заголовок максимум 120 символов')}
+  if(!tag){return toast('❗','Укажите категорию/тег')}
+  if(!desc){return toast('❗','Добавьте краткое описание')}
+  if(desc.length<10){return toast('❗','Описание минимум 10 символов')}
+  const now=new Date();
+  const dateStr=now.getDate()+' '+['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'][now.getMonth()]+' '+now.getFullYear();
+  const newItem={
+    id:Date.now(),
+    thumb:thumbColors[newsData.length%4],
+    icon:icon||'📰',
+    tag:tag,
+    title:title,
+    desc:desc,
+    date:dateStr
+  };
+  newsData.unshift(newItem);
+  localStorage.setItem('ec_news',JSON.stringify(newsData));
+  newsPageT=1;
+  cm('add-news');
+  renderNews('t');
+  // Очистить поля
+  ['an-title','an-tag','an-desc','an-icon'].forEach(id=>document.getElementById(id).value='');
+  toast('✅','Новость опубликована!');
+}
+
+// ── ПОСЕЩАЕМОСТЬ: ДОБАВИТЬ ЗАПИСЬ ──
+function addAttRecord(){
+  const stuId=document.getElementById('aa-stu').value;
+  const date=document.getElementById('aa-date').value;
+  const status=document.getElementById('aa-st').value;
+  if(!stuId||!date){return toast('❗','Выберите студента и дату')}
+  const todayAtt=new Date().toISOString().split('T')[0];
+  if(date<todayAtt){return toast('❗','Нельзя добавить запись на прошедшую дату')}
+  const stu=allStu.find(s=>s.id==stuId||s.name==stuId);
+  if(!stu) return;
+  // Проверяем дубликат
+  const idx=demoAtt.findIndex(a=>a.student===stu.name&&a.date===date);
+  if(idx>=0) demoAtt[idx].status=status;
+  else demoAtt.push({student:stu.name,group:stu.group,date,status});
+  localStorage.setItem('ec_att',JSON.stringify(demoAtt));
+  cm('add-att');
+  renderAtt(demoAtt);
+  document.getElementById('atc').textContent=demoAtt.length+' записей';
+  toast('✅','Запись посещаемости добавлена!');
+}
+// ── ПОСЕЩАЕМОСТЬ: ОТМЕТИТЬ ──
+function markAtt(student, group, date, status){
+  const idx = demoAtt.findIndex(a=>a.student===student&&a.date===date);
+  if(idx>=0) demoAtt[idx].status=status;
+  else demoAtt.push({student,group,date,status});
+  localStorage.setItem('ec_att', JSON.stringify(demoAtt));
+  renderAtt(demoAtt);
+  const sm={present:'Присутствует ✅',absent:'Отсутствует ❌',late:'Опоздал ⚠️'};
+  toast('📋', student+' — '+sm[status]);
+}
+// ── TEACHER FILTERS ──
+function fAsgn(){
+  const s=v('fa-s').toLowerCase(),g=v('fa-g'),st=v('fa-st');
+  const today=new Date().toISOString().split('T')[0];
+  renderAsgn(demoAsgn.filter(a=>{
+    if(s&&!a.title.toLowerCase().includes(s))return false;
+    if(g&&a.group!==g)return false;
+    if(st==='active'&&a.deadline<today)return false;
+    if(st==='expired'&&a.deadline>=today)return false;
+    return true;
+  }));
+}
+function fStu(){
+  const s=v('fs-s').toLowerCase(),g=v('fs-g'),l=v('fs-l');
+  renderStuGrid(allStu.filter(x=>{
+    if(s&&!x.name.toLowerCase().includes(s))return false;
+    if(g&&x.group!==g)return false;
+    if(l&&x.level!==l)return false;
+    return true;
+  }));
+}
+function fAtt(){
+  const d=v('fat-d'),g=v('fat-g'),s=v('fat-s');
+  renderAtt(demoAtt.filter(a=>{
+    if(d&&a.date!==d)return false;
+    if(g&&a.group!==g)return false;
+    if(s&&a.status!==s)return false;
+    return true;
+  }));
+}
+function editAsgn(id){
+  const a = demoAsgn.find(x=>String(x.id)===String(id));
+  if(!a) return;
+  // Заполняем поля модалки данными задания
+  document.getElementById('ma-edit-id').value = id;
+  document.getElementById('ma-t').value = a.title;
+  document.getElementById('ma-d').value = a.desc||'';
+  document.getElementById('ma-dl').value = a.deadline;
+  // Заголовок и кнопка
+  document.getElementById('asgn-modal-title').innerHTML = `✏️ Редактировать задание <button type="button" class="mcl" onclick="cm('add-asgn')">×</button>`;
+  document.getElementById('asgn-save-btn').textContent = 'Сохранить';
+  // Открываем модалку — заполним группы через om но без сброса полей
+  const todayStr=new Date().toISOString().split('T')[0];
+  const grps=[...new Set(allStu.map(s=>s.group).filter(Boolean))];
+  const sel=document.getElementById('ma-g');
+  sel.innerHTML=grps.length
+    ? grps.map(g=>`<option value="${g}"${g===a.group?' selected':''}>${g}</option>`).join('')
+    : `<option value="${a.group}">${a.group}</option>`;
+  document.getElementById('ma-dl').min=todayStr;
+  document.getElementById('modal-add-asgn').classList.add('open');
+}
+
+function addAsgn(){
+  const t=v('ma-t'),dl=v('ma-dl'),g=v('ma-g'),d=v('ma-d');
+  // Обязательные поля
+  if(!t){return toast('❗','Введите название задания')}
+  if(!dl){return toast('❗','Укажите дедлайн')}
+  if(!g){return toast('❗','Выберите группу')}
+  // Длина текста
+  if(t.length<3){return toast('❗','Название минимум 3 символа')}
+  if(t.length>100){return toast('❗','Название максимум 100 символов')}
+  if(d&&d.length>500){return toast('❗','Описание максимум 500 символов')}
+  // Дата не в прошлом
+  const todayCheck=new Date().toISOString().split('T')[0];
+  if(dl<todayCheck){return toast('❗','Дедлайн не может быть в прошлом!')}
+  const editId = document.getElementById('ma-edit-id').value;
+  if(editId){
+    // Режим редактирования
+    const idx = demoAsgn.findIndex(x=>String(x.id)===String(editId));
+    if(idx>=0){
+      demoAsgn[idx] = {...demoAsgn[idx], title:t, group:g, deadline:dl, desc:d};
+      allAsgn = [...demoAsgn];
+      localStorage.setItem('ec_asgn', JSON.stringify(allAsgn));
+    }
+    toast('✅','Задание обновлено!');
+  } else {
+    // Режим добавления
+    const newA={id:Date.now(),title:t,group:g,deadline:dl,submitted:0,total:0,desc:d};
+    demoAsgn.unshift(newA);
+    allAsgn.unshift({...newA});
+    localStorage.setItem('ec_asgn', JSON.stringify(allAsgn));
+    toast('✅','Задание добавлено!');
+  }
+  cm('add-asgn');
+  // Сбрасываем модалку в режим добавления
+  document.getElementById('ma-edit-id').value='';
+  document.getElementById('asgn-modal-title').innerHTML=`📚 Добавить задание <button type="button" class="mcl" onclick="cm('add-asgn')">×</button>`;
+  document.getElementById('asgn-save-btn').textContent='Добавить';
+  document.getElementById('ma-t').value='';
+  document.getElementById('ma-dl').value='';
+  document.getElementById('ma-d').value='';
+  renderAsgn(demoAsgn);
+  renderTHome();
+}
+
+// ── STUDENT ──
+function loadStudent(u){
+  const grp = u.group || '';
+  document.getElementById('s-nname').textContent=u.name;
+  document.getElementById('s-wn').textContent=u.name.split(' ')[0];
+  document.getElementById('s-pnm').textContent=u.name;
+  document.getElementById('s-plg').textContent=u.login;
+  document.getElementById('s-pph').textContent=u.phone||'—';
+  document.getElementById('s-pgr').textContent=grp||'—';
+  document.getElementById('s-edit-name').value=u.name;
+  document.getElementById('s-edit-phone').value=u.phone||'';
+  // Всегда сбрасываем фото — иначе остаётся от предыдущего студента
+  if(u.photo){
+    setPhUI('s', u.photo);
+  } else {
+    document.getElementById('s-nav').innerHTML='👨‍🎓';
+    document.getElementById('s-pp').innerHTML='👨‍🎓';
+  }
+
+  // Показываем бейдж группы
+  const badge1 = document.getElementById('s-group-badge');
+  const badge2 = document.getElementById('s-group-badge2');
+  if(badge1) badge1.textContent = grp ? '📌 '+grp : '';
+  if(badge2) badge2.textContent = grp ? '📌 '+grp : '';
+
+  // Оплата — показываем группу
+  const payGrp = document.getElementById('s-pay-group');
+  if(payGrp) payGrp.textContent = (grp||'—') + ' · 3 месяца';
+
+  // ПАТЧ: Задания студента — статус берётся из ec_asgn_status (учитель может принять/отклонить)
+  allAsgn = JSON.parse(localStorage.getItem('ec_asgn')||'[]');
+  asgnStatuses = JSON.parse(localStorage.getItem('ec_asgn_status')||'{}');
+  myTasks = grp ? allAsgn.filter(a=>a.group===grp).map(a=>{
+    const key = u.login+'_'+a.id;
+    const st = asgnStatuses[key] || {status:'pending', score:null};
+    return {id:a.id, title:a.title, group:a.group, deadline:a.deadline, status:st.status, score:st.score};
+  }) : [];
+
+  // Посещаемость студента — из реальных данных учителя
+  myAtt = demoAtt.filter(a=>a.student===u.name);
+
+  // Статистика
+  const done=myTasks.filter(a=>['submitted','checked'].includes(a.status)).length;
+  const pend=myTasks.filter(a=>a.status==='pending').length;
+  const scores=myTasks.filter(a=>a.score).map(a=>a.score);
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+  document.getElementById('ss-t').textContent=myTasks.length;
+  document.getElementById('ss-d').textContent=done;
+  document.getElementById('ss-p').textContent=pend;
+  document.getElementById('ss-sc').textContent=avg||'—';
+
+  setTimeout(()=>{
+    const attPct=myAtt.length?Math.round(myAtt.filter(a=>a.status==='present').length/myAtt.length*100):0;
+    const taskPct=myTasks.length?Math.round(done/myTasks.length*100):0;
+    document.getElementById('pg-sc').textContent=avg+'/100';
+    document.getElementById('pg-sb').style.width=avg+'%';
+    document.getElementById('pg-at').textContent=attPct+'%';
+    document.getElementById('pg-ab').style.width=attPct+'%';
+    document.getElementById('pg-tk').textContent=taskPct+'%';
+    document.getElementById('pg-tb').style.width=taskPct+'%';
+    const lvl=avg>=80?'Advanced':avg>=60?'Intermediate':'Beginner';
+    document.getElementById('pg-lv').textContent=lvl;
+    document.getElementById('pg-em').textContent=avg>=80?'🏆':avg>=60?'📈':'🌱';
+    document.getElementById('s-plv').textContent=lvl;
+  },600);
+
+  renderSHome(); renderTasks(myTasks); renderSAtt(myAtt); renderNews('s');
+  renderPayment();
+  go('student');
+}
+
+function renderSHome(){
+  const sm={submitted:['bd','Сдано ✅'],pending:['bw','Ожидает ⏳'],checked:['bp','Проверено 🎯'],rejected:['br','Отклонено ❌']};
+  const html = myTasks.slice(0,4).map(a=>
+    `<tr><td><b>${a.title}</b></td><td>${a.group}</td><td>${a.deadline}</td>
+    <td><span class="badge ${sm[a.status][0]}">${sm[a.status][1]}</span></td>
+    <td style="color:var(--yellow);font-weight:700">${a.score||'—'}</td></tr>`).join('');
+  document.getElementById('s-htb').innerHTML = html || `<tr><td colspan="5"><div class="empty"><div class="ei">📭</div><p>Нет заданий</p></div></td></tr>`;
+}
+function renderTasks(data){
+  document.getElementById('tc').textContent=data.length+' заданий';
+  const sm={submitted:['bd','Сдано ✅'],pending:['bw','Ожидает ⏳'],checked:['bp','Проверено 🎯'],rejected:['br','Отклонено ❌']};
+  document.getElementById('s-ttb').innerHTML=data.length?data.map(a=>`
+    <tr><td><b>${a.title}</b></td><td>${a.group}</td><td>${a.deadline}</td>
+    <td><span class="badge ${sm[a.status][0]}">${sm[a.status][1]}</span></td>
+    <td style="color:var(--yellow);font-weight:700">${a.score||'—'}</td>
+    <td>${['pending','rejected'].includes(a.status)?`<button type="button" class="ab aby" onclick="openSub(${a.id},'${a.title.replace(/'/g,"\\'")}')">📤 Сдать</button>`:'<span style="color:var(--muted);font-size:12px">—</span>'}</td></tr>`).join('')
+    :`<tr><td colspan="6"><div class="empty"><div class="ei">📭</div><p>Нет заданий для вашей группы</p></div></td></tr>`;
+}
+function renderSAtt(data){
+  document.getElementById('sac').textContent=data.length+' записей';
+  const sm={present:['bp','Присутствовал ✅'],absent:['ba','Отсутствовал ❌'],late:['bl','Опоздал ⚠️']};
+  document.getElementById('s-attb').innerHTML=data.map(a=>
+    `<tr><td>${a.date}</td><td>${a.group}</td><td><span class="badge ${sm[a.status][0]}">${sm[a.status][1]}</span></td></tr>`).join('');
+}
+
+// ── STUDENT FILTERS ──
+function fTasks(){
+  const s=v('ft-s').toLowerCase(), st=v('ft-st');
+  renderTasks(myTasks.filter(a=>{
+    if(s&&!a.title.toLowerCase().includes(s))return false;
+    if(st&&a.status!==st)return false;
+    return true;
+  }));
+}
+function fSAtt(){
+  const st=v('fsa-s'),m=v('fsa-m');
+  renderSAtt(myAtt.filter(a=>{
+    if(st&&a.status!==st)return false;
+    if(m&&!a.date.startsWith(m))return false;
+    return true;
+  }));
+}
+function rf(t){
+  if(t==='asgn'){['fa-s','fa-g','fa-st'].forEach(id=>{const el=document.getElementById(id);el.tagName==='INPUT'?el.value='':el.selectedIndex=0});renderAsgn(demoAsgn)}
+  else if(t==='stu'){['fs-s','fs-g','fs-l'].forEach(id=>{const el=document.getElementById(id);el.tagName==='INPUT'?el.value='':el.selectedIndex=0});renderStuGrid(allStu)}
+  else if(t==='att'){['fat-d','fat-g','fat-s'].forEach(id=>{const el=document.getElementById(id);el.tagName==='INPUT'?el.value='':el.selectedIndex=0});renderAtt(demoAtt)}
+  else if(t==='tasks'){['ft-s','ft-st'].forEach(id=>{const el=document.getElementById(id);el.tagName==='INPUT'?el.value='':el.selectedIndex=0});renderTasks(myTasks)}
+  else if(t==='satt'){['fsa-s','fsa-m'].forEach(id=>{const el=document.getElementById(id);el.tagName==='INPUT'?el.value='':el.selectedIndex=0});renderSAtt(myAtt)}
+}
+
+// ── SUBMIT TASK ──
+function openSub(id,name){subId=id;document.getElementById('submit-nm').textContent=name;om('submit')}
+function doSubmit(){
+  if(subId!=null){
+    const i=myTasks.findIndex(a=>a.id===subId);
+    if(i>=0){
+      myTasks[i].status='submitted';
+      if(cu){
+        const key=cu.login+'_'+subId;
+        asgnStatuses[key]={status:'submitted',score:null};
+        localStorage.setItem('ec_asgn_status',JSON.stringify(asgnStatuses));
+      }
+    }
+    renderTasks(myTasks);renderSHome();cm('submit');
+    toast('✅','Задание отправлено на проверку!');subId=null;
+  }
+}
+
+// ── PROFILE ──
+function chPhoto(prefix,input){
+  if(!input.files||!input.files[0])return;
+  const file = input.files[0];
+  // Проверка размера (макс 2MB)
+  if(file.size > 2*1024*1024){toast('❗','Фото слишком большое! Максимум 2MB');input.value='';return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const src=e.target.result;
+    // Сохраняем в текущего пользователя
+    if(cu){
+      cu.photo=src;
+      const i=users.findIndex(u=>u.login===cu.login);
+      if(i>=0){users[i].photo=src;localStorage.setItem('ec_users',JSON.stringify(users));}
+    }
+    setPhUI(prefix,src);
+    input.value=''; // сбрасываем input чтобы можно было выбрать то же фото снова
+    toast('🖼️','Фото профиля обновлено!');
+  };
+  reader.onerror=()=>toast('❗','Ошибка загрузки фото');
+  reader.readAsDataURL(file);
+}
+function setPhUI(p,src){
+  document.getElementById(p+'-nav').innerHTML=`<img src="${src}" alt="p">`;
+  document.getElementById(p+'-pp').innerHTML=`<img src="${src}" alt="p" style="width:100%;height:100%;object-fit:cover">`;
+}
+function saveProfile(p){
+  const name=v(p+'-edit-name'),phone=v(p+'-edit-phone');
+  if(!name){return toast('❗','Введите имя')}
+  if(name.length<2){return toast('❗','Имя минимум 2 символа')}
+  if(name.length>60){return toast('❗','Имя максимум 60 символов')}
+  if(phone&&!/^[\+\d\s\-\(\)]{7,20}$/.test(phone)){return toast('❗','Неверный формат телефона')}
+  if(cu){cu.name=name;cu.phone=phone;const i=users.findIndex(u=>u.login===cu.login);if(i>=0){users[i]=cu;localStorage.setItem('ec_users',JSON.stringify(users))}}
+  document.getElementById(p+'-pnm').textContent=name;
+  document.getElementById(p+'-pph').textContent=phone||'—';
+  document.getElementById(p+'-nname').textContent=name;
+  toast('✅','Профиль обновлён!');
+}
+function chPass(p){
+  const cp=document.getElementById(p+'-cp').value;
+  const np=document.getElementById(p+'-np').value;
+  const rp=document.getElementById(p+'-rp').value;
+  const err=document.getElementById(p+'-perr');
+  if(!cp||!np||!rp){return se(err,'Заполните все поля')}
+  if(cu&&cu.pass!==cp){return se(err,'Неверный текущий пароль')}
+  if(np.length<6){return se(err,'Новый пароль минимум 6 символов')}
+  if(np.length>50){return se(err,'Пароль максимум 50 символов')}
+  if(np!==rp){return se(err,'Пароли не совпадают')}
+  err.classList.remove('show');
+  if(cu){cu.pass=np;const i=users.findIndex(u=>u.login===cu.login);if(i>=0){users[i].pass=np;localStorage.setItem('ec_users',JSON.stringify(users))}}
+  [p+'-cp',p+'-np',p+'-rp'].forEach(id=>document.getElementById(id).value='');
+  toast('🔑','Пароль успешно изменён!');
+}
+
+// ── SUPPORT / PAYMENT ──
+function sendTicket(){
+  const tktT=v('tkt-t'), tktD=v('tkt-d');
+  if(!tktT){return toast('❗','Введите тему заявки')}
+  if(tktT.length<5){return toast('❗','Тема минимум 5 символов')}
+  if(tktT.length>100){return toast('❗','Тема максимум 100 символов')}
+  if(!tktD){return toast('❗','Опишите вашу проблему')}
+  if(tktD.length<10){return toast('❗','Описание проблемы минимум 10 символов')}
+  cm('ticket');
+  document.getElementById('tkt-t').value='';document.getElementById('tkt-d').value='';
+  toast('🎫','Заявка отправлена! Ответим в течение 24 часов');
+}
+function renderPayment(){
+  if(!cu) return;
+  // Читаем историю платежей этого студента из localStorage
+  const allPays = JSON.parse(localStorage.getItem('ec_payments')||'{}');
+  const myPays = allPays[cu.login] || [];
+
+  // Баланс = сумма всех платежей
+  const total = myPays.reduce((s,p)=>s+p.amount, 0);
+  const balEl = document.getElementById('pay-balance');
+  const dateEl = document.getElementById('pay-next-date');
+  if(balEl) balEl.textContent = total.toLocaleString('ru') + ' сом';
+
+  // Следующий платёж — следующий месяц
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth()+1, 1);
+  const nextStr = nextMonth.getDate()+' '+
+    ['января','февраля','марта','апреля','мая','июня',
+     'июля','августа','сентября','октября','ноября','декабря'][nextMonth.getMonth()]+
+    ' '+nextMonth.getFullYear();
+  if(dateEl) dateEl.textContent = myPays.length
+    ? 'Следующий платёж: '+nextStr
+    : 'Платежей ещё нет';
+
+  // Группа студента
+  const grpEl = document.getElementById('s-pay-group');
+  if(grpEl) grpEl.textContent = (cu.group||'—') + ' · 3 месяца';
+
+  // История платежей
+  const listEl = document.getElementById('pay-history-list');
+  if(listEl){
+    if(myPays.length===0){
+      listEl.innerHTML='<div class="empty"><div class="ei">💳</div><p>Нет платежей. Нажмите «Оплатить онлайн»</p></div>';
+    } else {
+      // Показываем от новых к старым
+      listEl.innerHTML = [...myPays].reverse().map(p=>
+        `<div class="pay-row">
+          <span>${p.date}</span>
+          <span style="color:var(--success);font-weight:700">✅ Оплачено — ${p.amount.toLocaleString('ru')} сом</span>
+        </div>`
+      ).join('');
+    }
+  }
+}
+
+function doPay(){
+  const card=v('pay-c'), exp=v('pay-e'), cvv=v('pay-v');
+  if(!card){return toast('❗','Введите номер карты')}
+  if(!exp){return toast('❗','Введите срок действия карты')}
+  if(!cvv){return toast('❗','Введите CVV код')}
+  // Формат карты — 16 цифр (с пробелами или без)
+  if(!/^[\d\s]{16,19}$/.test(card)){return toast('❗','Номер карты: 16 цифр')}
+  // Формат срока MM/YY
+  if(!/^(0[1-9]|1[0-2])\/\d{2}$/.test(exp)){return toast('❗','Срок действия формат ММ/ГГ (пример: 03/27)')}
+  // CVV — 3 цифры
+  if(!/^\d{3}$/.test(cvv)){return toast('❗','CVV: 3 цифры')}
+  // Сохраняем платёж в localStorage
+  const now = new Date();
+  const months = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                  'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const dateLabel = months[now.getMonth()]+' '+now.getFullYear();
+  const allPays = JSON.parse(localStorage.getItem('ec_payments')||'{}');
+  if(!allPays[cu.login]) allPays[cu.login]=[];
+  allPays[cu.login].push({date: dateLabel, amount: 5000});
+  localStorage.setItem('ec_payments', JSON.stringify(allPays));
+
+  cm('pay');
+  ['pay-c','pay-e','pay-v'].forEach(id=>document.getElementById(id).value='');
+  renderPayment();
+  toast('💳','Оплата прошла успешно! 5 000 сом');
+}
+
+// ── MODAL ──
+function om(id){
+  const todayStr=new Date().toISOString().split('T')[0];
+  // При открытии модалки посещаемости — заполняем список студентов и ставим min=today
+  if(id==='add-att'){
+    const sel=document.getElementById('aa-stu');
+    sel.innerHTML=allStu.length
+      ? allStu.map(s=>`<option value="${s.id}">${s.name} (${s.group})</option>`).join('')
+      : '<option value="">Нет зарегистрированных студентов</option>';
+    const aaDate=document.getElementById('aa-date');
+    aaDate.value=todayStr;
+    aaDate.min=todayStr;
+  }
+  // При открытии добавления задания — заполняем группы и ставим min=today для дедлайна
+  if(id==='add-asgn'){
+    const grps=[...new Set(allStu.map(s=>s.group).filter(Boolean))];
+    const sel=document.getElementById('ma-g');
+    sel.innerHTML=grps.length
+      ? grps.map(g=>`<option value="${g}">${g}</option>`).join('')
+      : '<option value="">Сначала зарегистрируйте студентов</option>';
+    document.getElementById('ma-dl').min=todayStr;
+  }
+  document.getElementById('modal-'+id).classList.add('open');
+}
+function cm(id){document.getElementById('modal-'+id).classList.remove('open')}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+
+// ── ADD ATTENDANCE RECORD ──
+
+// ── UTILS ──
+function v(id){const el=document.getElementById(id);return el?el.value.trim():''}
+function se(el,msg){el.textContent=msg;el.classList.add('show')}
+function toast(icon,msg){
+  document.getElementById('ti').textContent=icon;
+  document.getElementById('tm').textContent=msg;
+  const t=document.getElementById('toast');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const ap=document.querySelector('.page.active');
+    if(ap.id==='page-register')doReg();
+    else if(ap.id==='page-login')doLogin();
+  }
+});
+updateGroupSelects();
+
+
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
         read_only_fields = ['student', 'status', 'score']
 
     def validate(self, data):
-        # Нельзя сдать после дедлайна!
+
         assignment = data.get('assignment')
         if assignment and assignment.deadline < timezone.now():
             raise serializers.ValidationError("Дедлайн истёк! Нельзя сдать задание.")
