@@ -12,24 +12,18 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 BASE_DIR = Path(__file__).resolve().parent.parent
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = ["*"]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%a+*p2$q&9t5n6r@_(s8%2!*(hp=*6t5d!1_6m22!o4o)ql2w&'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -79,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'edu_center.urls'
@@ -113,8 +108,7 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
